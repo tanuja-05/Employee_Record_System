@@ -24,20 +24,39 @@ function App() {
 
     let saveEmpdetails = (e)=>{
          e.preventDefault();
-         axios.post(`http://localhost:4000/api/employee/records/insert`,empData).then(()=>{
+         if(empData._id){
+          axios.put(`http://localhost:4000/api/employee/records/update/${empData._id}`,empData).then(()=>{
+            alert("Data updated successfully");
+            setEmpdata({
+                eId:"",
+                eName:"",
+                eDepartment:"",
+                eDesignation:"",
+                eSalary:"",
+                eDoj:"",
+                _id:""
+            })
+            getAllEmp();
+          })
+         }
+         else{
+          axios.post(`http://localhost:4000/api/employee/records/insert`,empData).then(()=>{
             alert("Employee details added")
             setEmpdata({
-      eId:"",
-      eName:"",
-      eDepartment:"",
-      eDesignation:"",
-      eSalary:"",
-      eDoj:"",
-      _id:""
-    })
+                eId:"",
+                eName:"",
+                eDepartment:"",
+                eDesignation:"",
+                eSalary:"",
+                eDoj:"",
+                _id:""
+            })
+            getAllEmp();
          }).catch((err)=>{
           alert("Error",err)
          })
+         }
+         
     }
 
     let getAllEmp=()=>{
@@ -53,6 +72,24 @@ function App() {
      useEffect(()=>{
       getAllEmp();
      },[]);
+
+    let deleteRecord = (id)=>{
+      axios.delete(`http://localhost:4000/api/employee/records/delete/${id}`).then(()=>{
+          alert("Item deleted successfully");
+          getAllEmp();
+      })
+    }
+
+    let UpdateRecord=(id)=>{
+        axios.get(`http://localhost:4000/api/employee/records/view/${id}`).then((res)=>{
+             return res.data
+        }).then((data)=>{
+            if(data.status){
+               setEmpdata(data.viewObj)
+            }
+        })
+    }
+    
 
   return (
     <>
@@ -83,7 +120,7 @@ function App() {
             <input type="number" name='eSalary' placeholder='Enter salary' className='form-control' value={empData.eSalary} onChange={getValue}/>
             <label className='form-label' name='eDoj'>Date of Joining :</label>
             <input type="date" name='eDoj' className='form-control'  value={empData.eDoj}  onChange={getValue} />
-            <button type="Submit" className='btn btn-success w-100 mt-3'>Submit</button>
+            <button type="Submit" className='btn btn-success w-100 mt-3'>{empData._id?"Update Data":"Save Data"}</button>
          </form>
        </div>
         <div className='container col-8'>
@@ -112,12 +149,12 @@ function App() {
                        <td>{item.eDepartment}</td>
                        <td>{item.eDesignation}</td>
                        <td>{item.eSalary}</td>
-                       <td>{item.eDoj}</td>
+                       <td>{new Date(item.eDoj).toLocaleDateString("en-GB")}</td>
                         <td>
-                          <button className='btn btn-danger'>Delete</button>
+                          <button className='btn btn-danger' onClick={()=>deleteRecord(item._id)}>Delete</button>
                         </td>
                         <td>
-                          <button className='btn btn-danger'>Edit</button>
+                          <button className='btn btn-warning' onClick={()=>UpdateRecord(item._id)}>Edit</button>
                         </td>
                      </tr>
                   </tbody>

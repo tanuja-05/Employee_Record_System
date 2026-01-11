@@ -48,4 +48,15 @@ let recordsUpdate = async(req,res)=>{
 
 }
 
-module.exports={recordsInsert,recordsView,recordsDelete,recordsUpdate}
+let getSingleEmp = async(req,res)=>{
+    let recordsId=req.params.id;
+    let viewObj= await recordsModel.findOne({_id:recordsId});
+    res.send({
+        status:1,
+        msg:"Single Employee Data",
+        viewObj
+    })
+}
+
+
+module.exports={recordsInsert,recordsView,recordsDelete,recordsUpdate,getSingleEmp}
