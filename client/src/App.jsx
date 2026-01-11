@@ -26,6 +26,15 @@ function App() {
          e.preventDefault();
          axios.post(`http://localhost:4000/api/employee/records/insert`,empData).then(()=>{
             alert("Employee details added")
+            setEmpdata({
+      eId:"",
+      eName:"",
+      eDepartment:"",
+      eDesignation:"",
+      eSalary:"",
+      eDoj:"",
+      _id:""
+    })
          }).catch((err)=>{
           alert("Error",err)
          })
